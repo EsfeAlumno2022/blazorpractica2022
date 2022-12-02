@@ -1,0 +1,77 @@
+﻿@page "/fetchdata"
+@inject HttpClient Http
+
+<PageTitle>Weather forecast</PageTitle>
+
+<h1>Weather forecast</h1>
+
+<p>This component demonstrates fetching data from the server.</p>
+<input type="text" @bind-value="forecast.Summary" />
+<button class="btn btn-primary" @onclick="AddElemento">Add</button>
+<button class="btn btn-primary" @onclick="Reset">Reset</button>
+@if (forecasts == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Temp. (C)</th>
+                <th>Temp. (F)</th>
+                <th>Summary</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var forecast in forecasts)
+            {
+                <tr>
+                    <td>@forecast.Date.ToShortDateString()</td>
+                    <td>@forecast.TemperatureC</td>
+                    <td>@forecast.TemperatureF</td>
+                    <td>@forecast.Summary</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<WeatherForecast> forecasts=new List<WeatherForecast>();
+    private WeatherForecast forecast = new WeatherForecast{
+        Summary="Hola",
+        Date=DateTime.Now,
+        TemperatureC=100
+    };
+    protected override async Task OnInitializedAsync()
+    {
+        forecasts.Add(forecast);
+        // forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
+    }
+
+    public void AddElemento()
+    {
+        forecasts.Add(forecast);
+        /*forecasts.Add(new WeatherForecast { 
+         Date=DateTime.Now,
+          Summary="Sumary",
+           TemperatureC=12
+        });*/
+    }   
+    public void Reset()
+    {
+        forecasts = new List<WeatherForecast>();
+    }
+    public class WeatherForecast
+    {
+        public DateTime Date { get; set; }
+
+        public int TemperatureC { get; set; }
+
+        public string? Summary { get; set; }
+
+        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    }
+}
